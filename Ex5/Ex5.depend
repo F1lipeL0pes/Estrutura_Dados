@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1786496481 source:c:\users\aluno\documents\ed2\estrutura_dados\ex5\main.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+

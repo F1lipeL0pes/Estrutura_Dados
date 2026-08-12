@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1786491974 source:c:\users\aluno\documents\ed2\estrutura_dados\fibonacci\main.c
+	<stdio.h>
+	<stdlib.h>
+
