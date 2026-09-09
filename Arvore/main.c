@@ -123,6 +123,7 @@ noArvore *removerElemento(noArvore *raiz, int conteudo){
     return raiz;
 }
 
+
 int altura(noArvore *raiz){
     if(raiz == NULL){
         return -1;
@@ -139,6 +140,69 @@ int altura(noArvore *raiz){
     }
 }
 
+int profundidade(noArvore *raiz, int valor, int nivel) {
+    if (raiz == NULL) {
+        return -1;
+    }
+
+    if (raiz->conteudo == valor) {
+        return nivel;
+    }
+
+    int esquerda = profundidade(raiz->esq, valor, nivel + 1);
+
+    if (esquerda != -1) {
+        return esquerda;
+    }
+
+    return profundidade(raiz->dir, valor, nivel + 1);
+}
+
+
+int quantidadeNos(noArvore *raiz) {
+    if (raiz == NULL)
+        return 0;
+
+    return 1 + quantidadeNos(raiz->esq)
+             + quantidadeNos(raiz->dir);
+}
+
+void imprimirPorNivel(noArvore *raiz) {
+    if (raiz == NULL)
+        return;
+
+    noArvore *fila[quantidadeNos(raiz)];
+    int inicio = 0;
+    int fim = 0;
+
+    fila[fim++] = raiz;
+
+    int nivel = 0;
+
+    printf("\n");
+    while (inicio < fim) {
+        int quantidade = fim - inicio;
+
+        printf("Nivel %d: ", nivel);
+
+        for (int i = 0; i < quantidade; i++) {
+            noArvore *atual = fila[inicio++];
+
+            printf("%d ", atual->conteudo);
+
+            if (atual->esq != NULL)
+                fila[fim++] = atual->esq;
+
+            if (atual->dir != NULL)
+                fila[fim++] = atual->dir;
+        }
+
+        printf("\n");
+        nivel++;
+    }
+}
+
+
 int main()
 {
     noArvore *raiz = NULL;
@@ -148,8 +212,11 @@ int main()
     buscarElemento(raiz, 10);
     buscarElemento(raiz, 100);
     removerElemento(raiz, 10);
+    noArvore *n = inserirNo(raiz, 100);
+    noArvore *n2 = inserirNo(raiz, 1000);
     printf("\n");
     preOrdem(raiz);
     printf("A altura da árvore é de %d", altura(raiz));
+    imprimirPorNivel(raiz);
     return 0;
 }
