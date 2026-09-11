@@ -202,12 +202,22 @@ void imprimirPorNivel(noArvore *raiz) {
     }
 }
 
+void inverterArvore(noArvore *raiz){
+    if (raiz == NULL)
+        return;
+    noArvore *aux = raiz->esq;
+    raiz->esq = raiz->dir;
+    raiz->dir = aux;
+
+    inverterArvore(raiz->esq);
+    inverterArvore(raiz->dir);
+}
 
 int main()
 {
     noArvore *raiz = NULL;
     inserirSequencia(&raiz);
-    preOrdem(raiz);
+    /*preOrdem(raiz);
     printf("\n");
     buscarElemento(raiz, 10);
     buscarElemento(raiz, 100);
@@ -218,5 +228,15 @@ int main()
     preOrdem(raiz);
     printf("A altura da árvore é de %d", altura(raiz));
     imprimirPorNivel(raiz);
+    preOrdem(raiz);
+    printf("\n");
+    inOrdem(raiz);
+    printf("\n");
+    posOrdem(raiz)*/
+
+    imprimirPorNivel(raiz);
+    inverterArvore(raiz);
+    imprimirPorNivel(raiz);
+    printf("\n%d", altura(raiz));
     return 0;
 }
