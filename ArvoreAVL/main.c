@@ -8,7 +8,7 @@ typedef struct noArvore{
 }noArvore;
 
 noArvore *criarNo(int conteudo){
-    noArvore *no = calloc(1, sizeof(noArvore));
+    noArvore *no = (noArvore*) calloc(1, sizeof(noArvore));
     no->conteudo = conteudo;
     no->dir = NULL;
     no->esq = NULL;
@@ -194,30 +194,64 @@ void inverterArvore(noArvore *raiz){
     inverterArvore(raiz->dir);
 }
 
+
+noArvore *avl_rotate_diresq( noArvore*node) {
+    noArvore *a = node;
+    noArvore *b = a->dir;
+    noArvore *c = b->esq;
+
+    a->dir = c->esq;
+    b->esq = c->dir;
+    c->dir = b;
+    c->esq = a;
+
+    return(c);
+}
+
+noArvore *avl_rotate_esqdir( noArvore*node) {
+    noArvore *a = node;
+    noArvore *b = a->esq;
+    noArvore *c = b->dir;
+
+    a->esq = c->dir;
+    b->dir = c->esq;
+    c->esq = b;
+    c->dir = a;
+
+    return(c);
+}
+
+
+int avl_node_height ( noArvore * node ) {
+    int height_esq = 0;
+    int height_dir = 0;
+
+    if( node -> esq )
+        height_esq = avl_node_height ( node -> esq ) ;
+    if( node -> dir )
+        height_dir = avl_node_height ( node -> dir );
+
+    return height_dir > height_esq ? ++ height_dir :
+    ++ height_esq ;
+}
+
+int avl_balance_factor ( noArvore * node ){
+    int bf = 0;
+
+    if( node -> esq )
+        bf = bf + avl_node_height (node -> esq );
+    if( node -> dir )
+        bf = bf - avl_node_height (node -> dir );
+
+    return bf ;
+}
+
 int main()
 {
     noArvore *raiz = NULL;
     inserirSequencia(&raiz);
-    /*preOrdem(raiz);
-    printf("\n");
-    buscarElemento(raiz, 10);
-    buscarElemento(raiz, 100);
-    removerElemento(raiz, 10);
-    noArvore *n = inserirNo(raiz, 100);
-    noArvore *n2 = inserirNo(raiz, 1000);
-    printf("\n");
-    preOrdem(raiz);
-    printf("A altura da árvore é de %d", altura(raiz));
     imprimirPorNivel(raiz);
-    preOrdem(raiz);
-    printf("\n");
-    inOrdem(raiz);
-    printf("\n");
-    posOrdem(raiz)*/
-
+    avl_balance_factor(raiz);
     imprimirPorNivel(raiz);
-    inverterArvore(raiz);
-    imprimirPorNivel(raiz);
-    printf("\n%d", altura(raiz));
     return 0;
 }
