@@ -15,19 +15,6 @@ noArvore *criarNo(int conteudo){
     return no;
 }
 
-noArvore *inserirNo(noArvore *raiz, int conteudo){
-    if(raiz == NULL){
-        return criarNo(conteudo);
-    }
-    if(conteudo < raiz->conteudo){
-        raiz->esq = inserirNo(raiz->esq, conteudo);
-    }
-    else if(conteudo > raiz->conteudo){
-        raiz->dir = inserirNo(raiz->dir, conteudo);
-    }
-    return raiz;
-}
-
 void preOrdem(noArvore *raiz){
     if(raiz != NULL){
         printf("%d ", raiz->conteudo);
@@ -78,65 +65,6 @@ void buscarElemento(noArvore *raiz, int conteudo){
     }
     else{
         printf("\nO número %d não está na árvore", conteudo);
-    }
-}
-
-
-noArvore *removerElemento(noArvore *raiz, int conteudo){
-    if(raiz == NULL){
-        return NULL;
-    }
-
-    if(conteudo < raiz->conteudo){
-        raiz->esq = removerElemento(raiz->esq, conteudo);
-    }
-    else if(conteudo > raiz->conteudo){
-        raiz->dir = removerElemento(raiz->dir, conteudo);
-    }
-    else{
-        if(raiz->esq == NULL && raiz->dir == NULL){
-            free(raiz);
-            return NULL;
-        }
-
-        else if(raiz->esq == NULL){
-            noArvore *aux = raiz->dir;
-            free(raiz);
-            return aux;
-        }
-
-        else if(raiz->dir == NULL){
-            noArvore *aux = raiz->esq;
-            free(raiz);
-            return aux;
-        }
-
-        else{
-            noArvore *aux = raiz->dir;
-            while(aux->esq != NULL){
-                aux = aux->esq;
-            }
-            raiz->conteudo = aux->conteudo;
-            raiz->dir = removerElemento(raiz->dir, aux->conteudo);
-        }
-    }
-    return raiz;
-}
-
-
-int altura(noArvore *raiz){
-    if(raiz == NULL){
-        return -1;
-    }
-
-    int esquerda = altura(raiz->esq);
-    int direita = altura(raiz->dir);
-
-    if(esquerda > direita){
-        return esquerda + 1;
-    }
-    else{
-        return direita + 1;
     }
 }
 
@@ -195,6 +123,22 @@ void inverterArvore(noArvore *raiz){
 }
 
 
+noArvore *avl_rotate_esq(noArvore *node){
+    noArvore *aux = node->esq;
+    node->esq = aux->dir;
+    aux->dir = esq;
+
+    return(node);
+}
+
+noArvore *avl_rotate_dir(noArvore *node){
+    noArvore *aux = node->dir;
+    node->dir = aux->esq;
+    aux->esq = dir;
+
+    return(node);
+}
+
 noArvore *avl_rotate_diresq( noArvore*node) {
     noArvore *a = node;
     noArvore *b = a->dir;
@@ -244,6 +188,90 @@ int avl_balance_factor ( noArvore * node ){
         bf = bf - avl_node_height (node -> dir );
 
     return bf ;
+}
+
+noArvore *balancearArvore(noArvore *raiz){
+    if(raiz == NULL){
+        return NULL;
+    }
+
+    int bf = avl_balance_factor(raiz);
+
+    if(bf > 1){
+        if(avl_balance_factor(raiz->esq) >= 0){
+            raiz = avl_rotate_esq(raiz);
+        }else{
+            raiz = avl_rotate_esqdir(raiz);
+        }
+    }
+    else if(bf < -1){
+        if(avl_balance_factor(raiz->dir) <= 0){
+            raiz = avl_rotate_dir(raiz);
+        }else{
+            raiz = avl_rotate_diresq(raiz);
+        }
+    }
+
+    return raiz;
+
+}
+
+noArvore *inserirNo(noArvore *raiz, int conteudo){
+    if(raiz == NULL){
+        return criarNo(conteudo);
+    }
+    if(conteudo < raiz->conteudo){
+        raiz->esq = inserirNo(raiz->esq, conteudo);
+    }
+    else if(conteudo > raiz->conteudo){
+        raiz->dir = inserirNo(raiz->dir, conteudo);
+    }
+    raiz = balancearArvore(raiz);
+    return raiz;
+}
+
+
+
+noArvore *removerElemento(noArvore *raiz, int conteudo){
+    if(raiz == NULL){
+        return NULL;
+    }
+
+    if(conteudo < raiz->conteudo){
+        raiz->esq = removerElemento(raiz->esq, conteudo);
+    }
+    else if(conteudo > raiz->conteudo){
+        raiz->dir = removerElemento(raiz->dir, conteudo);
+    }
+    else{
+        if(raiz->esq == NULL && raiz->dir == NULL){
+            free(raiz);
+            return NULL;
+        }
+
+        else if(raiz->esq == NULL){
+            noArvore *aux = raiz->dir;
+            free(raiz);
+            return aux;
+        }
+
+        else if(raiz->dir == NULL){
+            noArvore *aux = raiz->esq;
+            free(raiz);
+            return aux;
+        }
+
+        else{
+            noArvore *aux = raiz->dir;
+            while(aux->esq != NULL){
+                aux = aux->esq;
+            }
+            raiz->conteudo = aux->conteudo;
+            raiz->dir = removerElemento(raiz->dir, aux->conteudo);
+        }
+    }
+    raiz = balancearArvore(raiz);
+    return raiz;
 }
 
 int main()
